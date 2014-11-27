@@ -7,22 +7,22 @@ import java.util.Random;
 public class Sudoku {
 
     // define  Sudoku Matrix with 9 X 9
-    private final int NORMS = 9; 
+    private final int NORMS = 9;
 
     // max to 10000 solutions
-    private final int MAX_SOLUTIONS = 10000; 
+    private final int MAX_SOLUTIONS = 10000;
 
     // Sodoku Matrix
     private final int[][] sudoku = new int[NORMS][NORMS];
 
     //swap
-    private final int[][] sudoku_swap = new int[NORMS][NORMS]; 
+    private final int[][] sudoku_swap = new int[NORMS][NORMS];
 
     //solutions
-    private final SudokuSolution solutions = new SudokuSolution(NORMS); 
+    private final SudokuSolution solutions = new SudokuSolution(NORMS);
 
     // candidate number
-    private int[][][] ctbl; 
+    private int[][][] ctbl;
 
     //enumeration DifficultyLevel
     public enum DifficultyLevel {
@@ -41,11 +41,11 @@ public class Sudoku {
     }
 
     public void newSudokuGame(DifficultyLevel level) {
-        
+
         generateSudoku();
 
         int nRemove = level.getDifficultyLevel();
-       
+
         Random random = new Random();
 
         for (int i = 0; i < nRemove; i++) {
@@ -56,34 +56,33 @@ public class Sudoku {
         }
 
         System.out.println("New Sudoku game:");
-        
+
         printSudoku(false);
         System.out.println("==================================");
 
-    } 
-    
-     public void generateSudoku() {
+    }
+
+    public void generateSudoku() {
 
         while (!generate()) {
         }
         SudokuSolution.copySudoku(sudoku, sudoku_swap, NORMS);
-    } 
-
+    }
 
     public int solveSudoku() {
 
         solutions.clearSolutions();
-        
+
         int count = 0;
         boolean unique;
-        
+
         ctbl = new int[NORMS][NORMS][10];
-        
+
         //init all candidate
         for (int col = 0; col < NORMS; col++) {
-            
+
             for (int row = 0; row < NORMS; row++) {
-                
+
                 if (0 == sudoku[row][col]) {
                     getConstraint(col, row, ctbl[row][col], true);
                     count++;
@@ -95,23 +94,22 @@ public class Sudoku {
             unique = false;
             for (int col = 0; col < NORMS; col++) {
                 for (int row = 0; row < NORMS; row++) {
-                    
+
                     //if just one condidate, set sudoku_swap[row][col] 
                     if (1 == constraintSize(ctbl[row][col])) {
-                        sudoku_swap[row][col] = ctbl[row][col][0]; 
+                        sudoku_swap[row][col] = ctbl[row][col][0];
                         setCell(row, col, ctbl[row][col][0]);
                         count--;
                         unique = true;
                     }
                 }
             }
-            
+
             //just one Solution, return 
             if (0 == count) {
                 solutions.addSolution(sudoku);
                 break;
             }
-            
 
             if (unique == false) {
                 //use backtracking 
@@ -125,7 +123,7 @@ public class Sudoku {
     //print Sudoku Solution
     public void printSudokuSolutions() {
         solutions.printSolutions();
-    } 
+    }
 
     //generate
     private boolean generate() {
@@ -142,17 +140,17 @@ public class Sudoku {
             }
         }
         return true;
-    } 
+    }
 
     //backtracking solving Sudoku,count: how many number must be solving
     private int multipleSolutions(int count) {
-         
+
         Deque<Integer> deque = new ArrayDeque<>();
-        int results = 0; 
-        int reach = 0; 
+        int results = 0;
+        int reach = 0;
         int row = 0;
         int col = 0;
-        int next = -1; 
+        int next = -1;
 
         while (true) {
 
@@ -191,7 +189,7 @@ public class Sudoku {
                 // get a sultion
                 results++;
                 solutions.addSolution(sudoku);
-                
+
                 //backtracking
                 next = deque.pop() + 1;
                 sudoku[row][col] = 0;
@@ -209,7 +207,7 @@ public class Sudoku {
 
             }
 
-        } 
+        }
     }
 
     // set sudoku[row][col] with val, update Constraints
@@ -219,7 +217,7 @@ public class Sudoku {
     }
 
     //get selection number for sudoku[row][col] and save in Constraints
-    private void getConstraint(int col, int row, int[] constraint, 
+    private void getConstraint(int col, int row, int[] constraint,
             boolean allIter) {
 
         int[] cc = new int[10];
@@ -295,7 +293,7 @@ public class Sudoku {
                 }
             }
         }
-    } 
+    }
 
     //update constraint for sudoku[row][col], remove val
     private void updateConstraints(int row, int col, int val) {
@@ -335,7 +333,6 @@ public class Sudoku {
             }
         }
 
-
         // cut out the value from the constraints of the cells in the same block
         for (int i = row / 3 * 3; i < row / 3 * 3 + 3; i++) {
             for (int j = col / 3 * 3; j < col / 3 * 3 + 3; j++) {
@@ -354,7 +351,7 @@ public class Sudoku {
                 }
             }
         }
-        
+
     }
 
     //get random constraint
@@ -386,8 +383,6 @@ public class Sudoku {
         return len;
     }
 
-
-     //Sudoku ausdruchen
     private void printSudoku(boolean sparse) {
 
         for (int row = 0; row < NORMS; row++) {
@@ -401,5 +396,5 @@ public class Sudoku {
             System.out.println();
         }
 
-    } 
+    }
 }
